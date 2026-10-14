@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+db.sqlite3
+
+# Django
+staticfiles/
+media/
+
+# Local configuration and secrets
+.env
+.venv/
+venv/
+
+# Tooling
+.idea/
+.vscode/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log

@@ -1,0 +1,78 @@
+{% extends "URL_Shortener/base.html" %}
+
+{% block title %}Linkwell — short links, clearer results{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+  <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.1fr_.9fr] lg:gap-16">
+    <div class="max-w-2xl">
+      <p class="eyebrow">LINK MANAGEMENT, MADE SIMPLE</p>
+      <h1 class="hero-title mt-5">Make every link <span>go further.</span></h1>
+      <p class="mt-6 max-w-xl text-lg leading-8 text-slate-600">
+        Turn long URLs into concise, shareable links. Keep them organized and understand what gets clicked.
+      </p>
+      <div class="mt-9 flex flex-wrap items-center gap-4 text-sm text-slate-500">
+        <span class="inline-flex items-center gap-2"><span class="feature-dot"></span> Fast, reliable redirects</span>
+        <span class="inline-flex items-center gap-2"><span class="feature-dot"></span> Click insights included</span>
+      </div>
+    </div>
+
+    <div class="shorten-card">
+      <div class="mb-6">
+        <p class="text-sm font-semibold uppercase tracking-[.14em] text-blue-700">Start with a link</p>
+        <h2 class="mt-2 text-2xl font-bold text-slate-900">Shorten your URL</h2>
+        <p class="mt-2 text-sm text-slate-500">Paste a full web address to create a shareable short link.</p>
+      </div>
+      <form method="post" action="{% url 'shortener:shorten' %}" class="space-y-4">
+        {% csrf_token %}
+        <label for="{{ url_form.url.id_for_label }}" class="field-label">Destination URL</label>
+        {{ url_form.url }}
+        {% for error in url_form.url.errors %}
+          <p class="field-error">{{ error }}</p>
+        {% endfor %}
+        {% if rate_limited %}
+          <p class="field-error">You have reached the anonymous link limit. Sign in to continue creating links.</p>
+        {% endif %}
+        <button type="submit" class="btn btn-primary w-full" data-submit-label="Creating link">
+          Create short link
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="h-4 w-4"><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+      <p class="mt-4 text-center text-xs leading-5 text-slate-500">
+        No account required. Create an account to save links and view analytics.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
+  <div class="mx-auto max-w-2xl text-center">
+    <p class="eyebrow">A BETTER WAY TO SHARE</p>
+    <h2 class="section-title mt-3">Everything you need. Nothing you don't.</h2>
+    <p class="mt-4 text-slate-600">Thoughtful link tools that keep your sharing simple and your results visible.</p>
+  </div>
+  <div class="mt-10 grid gap-5 md:grid-cols-3">
+    <article class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.5 13.5a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1.72 1.72M13.5 10.5a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1.72-1.72" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </div>
+      <h3 class="mt-5 text-lg font-bold">Share with confidence</h3>
+      <p class="mt-2 leading-7 text-slate-600">Clean, compact links that are easy to share across your channels.</p>
+    </article>
+    <article class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V5m0 14h17M8 15l3.5-4 3 2 5.5-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="mt-5 text-lg font-bold">See what resonates</h3>
+      <p class="mt-2 leading-7 text-slate-600">Track visits over time and get a clear picture of link engagement.</p>
+    </article>
+    <article class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v6h-2zM14 18h2v2h-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="mt-5 text-lg font-bold">Take it anywhere</h3>
+      <p class="mt-2 leading-7 text-slate-600">Generate a QR code for print, presentations, and in-person sharing.</p>
+    </article>
+  </div>
+</section>
+{% endblock %}

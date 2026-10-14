@@ -1,0 +1,65 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Create, manage, and measure clean, memorable short links.">
+  <title>{% block title %}Linkwell — thoughtful link management{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'URL_Shortener/site.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body class="min-h-screen bg-base-100 text-slate-900">
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="navbar mx-auto max-w-7xl px-5 sm:px-8">
+        <a href="{% url 'shortener:home' %}" class="brand-mark" aria-label="Linkwell home">
+          <span class="brand-symbol">L</span>
+          <span class="brand-name">linkwell</span>
+        </a>
+        <div class="ml-auto flex items-center gap-3">
+          {% if user.is_authenticated %}
+            <a href="{% url 'shortener:dashboard' %}" class="nav-link">Dashboard</a>
+            <span class="hidden text-sm text-slate-500 sm:inline">{{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-ghost">Sign out</button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" class="nav-link">Sign in</a>
+            <a href="{% url 'shortener:register' %}" class="btn btn-sm btn-primary">Create account</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <main>
+      {% if messages %}
+        <div class="mx-auto max-w-7xl space-y-2 px-5 pt-5 sm:px-8" aria-live="polite">
+          {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %} shadow-sm">
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <span>Linkwell — clear links, useful insight.</span>
+        <span>Built for links that go further.</span>
+      </div>
+    </footer>
+  </div>
+  <div id="toast-region" class="toast toast-end toast-bottom z-50" aria-live="polite"></div>
+  <script src="{% static 'URL_Shortener/site.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,107 @@
+{% extends "URL_Shortener/base.html" %}
+{% load static %}
+
+{% block title %}Dashboard — Linkwell{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14">
+  <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="eyebrow">YOUR WORKSPACE</p>
+      <h1 class="page-title mt-2">Link dashboard</h1>
+      <p class="mt-2 text-slate-600">Create, organize, and measure your short links.</p>
+    </div>
+    <a href="#create-link" class="btn btn-primary">Create a short link</a>
+  </div>
+
+  <div class="mt-8 grid gap-4 sm:grid-cols-2">
+    <div class="stat-card">
+      <p class="stat-label">Total links</p>
+      <p class="stat-value">{{ links.count }}</p>
+      <p class="mt-1 text-sm text-slate-500">Links in your workspace</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Total clicks</p>
+      <p class="stat-value">{{ total_clicks }}</p>
+      <p class="mt-1 text-sm text-slate-500">Visits across all your links</p>
+    </div>
+  </div>
+
+  <section class="panel-card mt-6" aria-labelledby="analytics-heading">
+    <div class="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+      <div>
+        <h2 id="analytics-heading" class="panel-title">Click activity</h2>
+        <p class="mt-1 text-sm text-slate-500">Daily visits across your links over the last 14 days.</p>
+      </div>
+      <span class="text-sm font-medium text-slate-500">Last 14 days</span>
+    </div>
+    <div class="mt-6 h-64">
+      <canvas id="click-chart" aria-label="Clicks by day during the last 14 days" role="img"></canvas>
+    </div>
+    {{ chart_labels|json_script:"chart-labels" }}
+    {{ chart_values|json_script:"chart-values" }}
+  </section>
+
+  <section id="create-link" class="panel-card mt-6" aria-labelledby="create-heading">
+    <div class="mb-5">
+      <h2 id="create-heading" class="panel-title">Create a short link</h2>
+      <p class="mt-1 text-sm text-slate-500">Add a destination URL to your workspace.</p>
+    </div>
+    <form method="post" action="{% url 'shortener:shorten' %}" class="flex flex-col gap-3 sm:flex-row sm:items-start">
+      {% csrf_token %}
+      <div class="flex-1">
+        {{ url_form.url }}
+        {% for error in url_form.url.errors %}
+          <p class="field-error mt-2">{{ error }}</p>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary shrink-0" data-submit-label="Creating link">Create link</button>
+    </form>
+  </section>
+
+  <section class="mt-10" aria-labelledby="links-heading">
+    <div class="mb-5 flex items-center justify-between gap-4">
+      <div>
+        <h2 id="links-heading" class="panel-title">Your links</h2>
+        <p class="mt-1 text-sm text-slate-500">Manage destinations and monitor performance.</p>
+      </div>
+    </div>
+    {% if links %}
+      <div class="space-y-4">
+        {% for link in links %}
+          <article class="link-card">
+            <div class="min-w-0 flex-1">
+              <p class="break-all font-semibold text-blue-700">{{ request.scheme }}://{{ request.get_host }}{% url 'shortener:redirect' link.short_code %}</p>
+              <p class="mt-2 truncate text-sm text-slate-500" title="{{ link.original_url }}">{{ link.original_url }}</p>
+              <div class="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-slate-500">
+                <span>{{ link.clicks }} clicks</span>
+                <span>Created {{ link.created_at|date:"M j, Y" }}</span>
+              </div>
+            </div>
+            <div class="flex shrink-0 items-center gap-2">
+              <button type="button" class="btn btn-sm btn-outline" data-copy="{{ request.scheme }}://{{ request.get_host }}{% url 'shortener:redirect' link.short_code %}">Copy</button>
+              <a class="btn btn-sm btn-ghost" href="{% url 'shortener:qr_code' link.short_code %}" target="_blank" rel="noopener">QR code</a>
+              <form method="post" action="{% url 'shortener:delete_url' link.short_code %}" data-confirm="Delete this short link?">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-ghost text-red-600">Delete</button>
+              </form>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="mx-auto max-w-md">
+          <p class="text-lg font-bold text-slate-900">Your first link starts here.</p>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Create a short link above and it will be ready to share in seconds.</p>
+        </div>
+      </div>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js" defer></script>
+<script src="{% static 'URL_Shortener/dashboard.js' %}" defer></script>
+{% endblock %}

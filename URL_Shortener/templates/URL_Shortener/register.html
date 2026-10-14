@@ -1,0 +1,31 @@
+{% extends "URL_Shortener/base.html" %}
+
+{% block title %}Create an account — Linkwell{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-md px-5 py-14 sm:py-20">
+  <div class="panel-card">
+    <p class="eyebrow">GET STARTED</p>
+    <h1 class="page-title mt-2">Create your account</h1>
+    <p class="mt-2 text-sm text-slate-600">Save links, track clicks, and keep your work in one place.</p>
+    <form method="post" class="mt-7 space-y-4">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="mt-2 text-xs leading-5 text-slate-500">{{ field.help_text|safe }}</div>{% endif %}
+          {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+      {% endfor %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-error text-sm">{{ form.non_field_errors }}</div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary w-full">Create account</button>
+    </form>
+    <p class="mt-6 text-center text-sm text-slate-600">
+      Already registered? <a class="font-semibold text-blue-700 hover:underline" href="{% url 'login' %}">Sign in</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

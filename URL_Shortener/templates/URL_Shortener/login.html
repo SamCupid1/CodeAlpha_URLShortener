@@ -1,0 +1,36 @@
+{% extends "URL_Shortener/base.html" %}
+
+{% block title %}Sign in — Linkwell{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-md px-5 py-14 sm:py-20">
+  <div class="panel-card">
+    <p class="eyebrow">WELCOME BACK</p>
+    <h1 class="page-title mt-2">Sign in</h1>
+    <p class="mt-2 text-sm text-slate-600">Sign in to manage your links and view your analytics.</p>
+    <form method="post" class="mt-7 space-y-4">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="auth-error" role="alert">
+          We couldn't sign you in. Check your username or email and password, then try again.
+        </div>
+      {% endif %}
+      <div>
+        <label class="field-label" for="{{ form.username.id_for_label }}">Username or email address</label>
+        <input class="input input-bordered mt-2 w-full" type="text" name="username" id="{{ form.username.id_for_label }}" placeholder="Username or email address" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus>
+        {% for error in form.username.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+      <div>
+        <label class="field-label" for="{{ form.password.id_for_label }}">Password</label>
+        <input class="input input-bordered mt-2 w-full" type="password" name="password" id="{{ form.password.id_for_label }}" autocomplete="current-password" required>
+        {% for error in form.password.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit" class="btn btn-primary w-full">Sign in</button>
+    </form>
+    <p class="mt-6 text-center text-sm text-slate-600">
+      New to Linkwell? <a class="font-semibold text-blue-700 hover:underline" href="{% url 'shortener:register' %}">Create an account</a>
+    </p>
+  </div>
+</section>
+{% endblock %}
